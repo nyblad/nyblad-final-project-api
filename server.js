@@ -3,13 +3,13 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt-nodejs'
-// import guests from './data/guests.json'
+import guests from './data/guests.json'
 import users from './data/users.json'
 import { Guest } from './models/guest'
 import { User } from './models/user'
 
 // MONGOOSE SETUP
-const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/guest-list'
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project'
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = Promise
 
@@ -21,6 +21,10 @@ if (process.env.RESET_DB) {
 
     users.forEach(({ name, email, password }) => {
       new User({ name, email, password: bcrypt.hashSync(password) }).save()
+    })
+
+    guests.forEach((guestData) => {
+      new Guest(guestData).save()
     })
   }
   seedDatabase()
@@ -43,7 +47,7 @@ const authenticateUser = async (req, res, next) => {
       .status(403)
       .json({ message: 'accesToken missing or wrong', errors: err.errors })
   }
-};
+}
 
 // PORT & APP SETUP
 const port = process.env.PORT || 8000 // Default 8000, can be overridden e.g PORT=5000 npm run dev
@@ -60,9 +64,10 @@ app.use((req, res, next) => {
   }
 })
 
+// ------------------ ROUTES ------------------------- //
 // ROUTES
 app.get('/', (req, res) => {
-  res.send('Endpoints: GET/guests GET/guests/:id GET/guests?name= GET/guests?attending=true/false')
+  res.send('Sofie Nyblad: Final project backend @ Technigo 2020')
 })
 
 // ROUTE TO LOGIN USER
@@ -98,6 +103,8 @@ const queryBuilder = (req, res) => {
 }
 
 // GET ROUTE FOR GUESTS
+// Secure endpoint, user needs to be logged in to access this.
+app.get('/guests', authenticateUser)
 app.get('/guests', async (req, res) => {
   // Gets the query from queryBuilder
   const query = queryBuilder(req, res)
@@ -126,7 +133,6 @@ app.get('/guests/:id', async (req, res) => {
     res.status(404).json({ error: 'Guest not found' })
   }
 })
-
 
 // POST ROUTE
 app.post('/guests', async (req, res) => {
