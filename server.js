@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt-nodejs'
-import guests from './data/guests.json'
+// import guests from './data/guests.json'
 // import users from './data/users.json'
 import { Guest } from './models/guest'
 import { User } from './models/user'
@@ -14,21 +14,18 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = Promise
 
 // SEEDING FOR ADDING NEW DATA WHEN SETTING UP
-if (process.env.RESET_DB) {
-  console.log('Resetting database')
-  const seedDatabase = async () => {
-    await User.deleteMany({})
+// if (process.env.RESET_DB) {
+//   console.log('Resetting database')
+//   const seedDatabase = async () => {
+//     await User.deleteMany({})
 
-    // users.forEach(({ name, email, password }) => {
-    //   new User({ name, email, password: bcrypt.hashSync(password) }).save()
-    // })
+//     users.forEach(({ name, email, password }) => {
+//       new User({ name, email, password: bcrypt.hashSync(password) }).save()
+//     })
 
-    guests.forEach((guestData) => {
-      new Guest(guestData).save()
-    })
-  }
-  seedDatabase()
-}
+//   }
+//   seedDatabase()
+// }
 
 // MIDDLEWARE TO CHECK ACCESSTOKEN FOR USERS (IF THE USER MATCH ANY ACCESSTOKEN IN DB)
 const authenticateUser = async (req, res, next) => {
