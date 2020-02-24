@@ -4,7 +4,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt-nodejs'
 import guests from './data/guests.json'
-import users from './data/users.json'
+// import users from './data/users.json'
 import { Guest } from './models/guest'
 import { User } from './models/user'
 
@@ -19,9 +19,9 @@ if (process.env.RESET_DB) {
   const seedDatabase = async () => {
     await User.deleteMany({})
 
-    users.forEach(({ name, email, password }) => {
-      new User({ name, email, password: bcrypt.hashSync(password) }).save()
-    })
+    // users.forEach(({ name, email, password }) => {
+    //   new User({ name, email, password: bcrypt.hashSync(password) }).save()
+    // })
 
     guests.forEach((guestData) => {
       new Guest(guestData).save()
