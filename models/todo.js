@@ -7,9 +7,6 @@ export const Todo = mongoose.model('Todo', {
     minlength: 2,
     maxlength: 50
   },
-  category: {
-    type: String
-  },
   addedAt: {
     type: Date,
     default: Date.now
