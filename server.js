@@ -67,6 +67,26 @@ app.get('/', (req, res) => {
   res.send('Sofie Nyblad: Final project backend @ Technigo 2020')
 })
 
+// ------------------ USER ROUTES ------------------------- //
+// ROUTE TO ADD A USER
+// Needed to create the users I want with crypted passwords
+app.post('/users', async (req, res) => {
+  try {
+    const { name, email, password } = req.body
+    const newUser = await new User({
+      name,
+      email,
+      password: bcrypt.hashSync(password)
+    })
+    newUser.save()
+    res.status(201).json(newUser)
+  } catch (err) {
+    res
+      .status(400)
+      .json({ messsage: 'Could not create user', error: err.errors })
+  }
+})
+
 // ROUTE TO LOGIN USER
 app.post('/login', async (req, res) => {
   try {
