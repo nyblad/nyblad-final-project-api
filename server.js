@@ -200,9 +200,9 @@ app.get('/todos', async (req, res) => {
 // POST ROUTE FOR TODOS
 app.post('/todos', async (req, res) => {
   // Retrieve info sent by the client to our API endpoint
-  const { text, category } = req.body
+  const { text } = req.body
   // Use my mongoose model to create the database entry
-  const todo = new Todo({ text, category })
+  const todo = new Todo({ text })
   // Using try/catch instead of if/else
   try {
     //Sucess
