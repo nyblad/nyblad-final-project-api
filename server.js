@@ -12,6 +12,17 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project'
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = Promise
 
+// SEEDING FOR ADDING NEW DATA WHEN SETTING UP
+if (process.env.RESET_DB) {
+  console.log('Resetting database')
+  const seedDatabase = async () => {
+    await Todo.deleteMany({})
+    new Todo({ text: 'Send invitations' }).save()
+    new Todo({ text: 'Book a local' }).save()
+  }
+  seedDatabase()
+}
+
 // MIDDLEWARE TO CHECK ACCESSTOKEN FOR USERS (IF THE USER MATCH ANY ACCESSTOKEN IN DB)
 const authenticateUser = async (req, res, next) => {
   try {
