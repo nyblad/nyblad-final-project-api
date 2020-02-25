@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt-nodejs'
 import { Guest } from './models/guest'
 import { User } from './models/user'
+import { Todo } from './models/todo'
 
 // MONGOOSE SETUP
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/final-project'
@@ -125,7 +126,7 @@ app.get('/guests', async (req, res) => {
   }
 })
 
-// GET ROUTE FOR SPECIFIC ID
+// GET ROUTE FOR SPECIFIC GUEST ID
 app.get('/guests/:id', async (req, res) => {
   const guest = await Guest.findById(req.params.id)
   if (guest) {
@@ -135,7 +136,7 @@ app.get('/guests/:id', async (req, res) => {
   }
 })
 
-// POST ROUTE
+// POST ROUTE FOR GUESTS
 app.post('/guests', async (req, res) => {
   // Retrieve info sent by the client to our API endpoint
   const { first_name, last_name, email, phone, allergies, other, isAttending } = req.body
@@ -152,7 +153,7 @@ app.post('/guests', async (req, res) => {
   }
 })
 
-// PUT ROUTE FOR SPECIFIC ID
+// PUT ROUTE FOR SPECIFIC GUEST ID
 app.put('/guests/:id', async (req, res) => {
   const { id } = req.params
   try {
@@ -165,7 +166,7 @@ app.put('/guests/:id', async (req, res) => {
   }
 })
 
-// DELETE ROUTE FOR SPECIFIC ID
+// DELETE ROUTE FOR SPECIFIC GUEST ID
 app.delete('/guests/:id', async (req, res) => {
   const { id } = req.params
   try {
@@ -181,14 +182,63 @@ app.delete('/guests/:id', async (req, res) => {
 
 // ------------------ TO DO ROUTES ------------------------- //
 
-// GET
+// GET ROUTE FOR TODOS
+app.get('/todos', authenticateUser)
+app.get('/todos', async (req, res) => {
+  // If query is true: filter on that query, if false: return all guests
+  const todos = await Todo.find().sort({ 'added': -1 })
+  // If there are any matching todos, return them. Else return error.
+  if (todos) {
+    res.json({
+      todos: todos
+    })
+  } else {
+    res.status(404).json({ error: 'No todos found' })
+  }
+})
 
-// POST
+// POST ROUTE FOR TODOS
+app.post('/todos', async (req, res) => {
+  // Retrieve info sent by the client to our API endpoint
+  const { text, category } = req.body
+  // Use my mongoose model to create the database entry
+  const todo = new Todo({ text, category })
+  // Using try/catch instead of if/else
+  try {
+    //Sucess
+    const savedTodo = await todo.save()
+    res.status(201).json(savedTodo)
+  } catch (err) {
+    // Failed
+    res.status(400).json({ message: 'Could not save todo', error: err.errors })
+  }
+})
 
-// PUT
+// PUT ROUTE FOR SPECIFIC TODO ID
+app.put('/todos/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    //Sucess
+    await Todo.findOneAndUpdate({ '_id': id }, req.body, { new: true })
+    res.status(201).json()
+  } catch (err) {
+    // Failed
+    res.status(400).json({ message: 'Could not update todo', error: err.errors })
+  }
+})
 
-// DELETE
-
+// DELETE ROUTE FOR SPECIFIC TODO ID
+app.delete('/todos/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    // Sucess to delete the guest
+    await Todo.findOneAndDelete({ '_id': id })
+    res.status(201).json()
+  } catch (err) {
+    // Failed
+    res.status(404).json({ message: `Could not delete todo `, error: err.errors })
+  }
+})
 
 // START THE SERVER
 app.listen(port, () => {
