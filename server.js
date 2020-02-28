@@ -197,7 +197,7 @@ app.delete('/guests/:id', async (req, res) => {
 app.get('/todos', authenticateUser)
 app.get('/todos', async (req, res) => {
   // If query is true: filter on that query, if false: return all guests
-  const todos = await Todo.find().sort({ 'added': -1 })
+  const todos = await Todo.find().sort({ 'added': 1 })
   // If there are any matching todos, return them. Else return error.
   if (todos) {
     res.json({
@@ -229,12 +229,10 @@ app.post('/todos', async (req, res) => {
 app.put('/todos/:id', async (req, res) => {
   const { id } = req.params
   try {
-    //Sucess
-    const updatedTodo = await Todo.findOneAndUpdate({ '_id': id }, req.body, { new: true })
-    // await Todo.updateOne({ '_id': id }, req.body)
-    res.status(201).json(updatedTodo)
+    const todo = await Todo.findById(id)
+    await Todo.updateOne({ '_id': id }, { 'isCompleted': !todo.isCompleted })
+    res.status(201).json()
   } catch (err) {
-    // Failed
     res.status(400).json({ message: 'Could not update todo', error: err.errors })
   }
 })
