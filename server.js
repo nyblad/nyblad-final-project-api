@@ -230,9 +230,9 @@ app.put('/todos/:id', async (req, res) => {
   const { id } = req.params
   try {
     //Sucess
-    await Todo.findOneAndUpdate({ '_id': id }, req.body, { new: true })
+    const updatedTodo = await Todo.findOneAndUpdate({ '_id': id }, req.body, { new: true })
     // await Todo.updateOne({ '_id': id }, req.body)
-    res.status(201).json()
+    res.status(201).json(updatedTodo)
   } catch (err) {
     // Failed
     res.status(400).json({ message: 'Could not update todo', error: err.errors })
