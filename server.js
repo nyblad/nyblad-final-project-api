@@ -190,14 +190,12 @@ app.delete('/guests/:id', async (req, res) => {
   }
 })
 
-
 // ------------------ TO DO ROUTES ------------------------- //
 
 // GET ROUTE FOR TODOS
 app.get('/todos', authenticateUser)
 app.get('/todos', async (req, res) => {
-  // If query is true: filter on that query, if false: return all guests
-  const todos = await Todo.find().sort({ 'added': 1 })
+  const todos = await Todo.find().sort({ 'addedAt': -1 })
   // If there are any matching todos, return them. Else return error.
   if (todos) {
     res.json({
