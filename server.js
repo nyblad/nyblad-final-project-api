@@ -57,7 +57,7 @@ app.use((req, res, next) => {
   }
 })
 
-// ------------------ ROUTES ------------------------- //
+// -------------------------- ROUTES ------------------------------ //
 // ROUTES
 app.get('/', (req, res) => {
   res.send('Sofie Nyblad: Final project backend @ Technigo 2020')
@@ -98,7 +98,7 @@ app.post('/login', async (req, res) => {
   }
 })
 
-// ------------------ GUEST LIST ROUTES ------------------------- //
+// ---------------- GUEST LIST ROUTES ----------------------- //
 // QUERYBUILDER TO HAVE MULTIPLE QUERIES IN GUESTS ROUTE
 const queryBuilder = (req, res) => {
   const { name, attending } = req.query // Query params
@@ -169,8 +169,8 @@ app.put('/guests/:id', async (req, res) => {
   const { id } = req.params
   try {
     //Sucess
-    await Guest.findOneAndUpdate({ '_id': id }, req.body, { new: true })
-    res.status(201).json()
+    const guest = await Guest.findOneAndUpdate({ '_id': id }, req.body, { new: true })
+    res.status(201).json(guest)
   } catch (err) {
     // Failed
     res.status(400).json({ message: 'Could not update guest', error: err.errors })
